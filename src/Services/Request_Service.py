@@ -36,6 +36,17 @@ class RequestService:
         if match:
             return match.group(1)
         raise ValueError(f"Invalid model link: {model_link}")
+    
+    @staticmethod
+    def model_link_to_name(model_link: str) -> str:
+        ''' Converts a Hugging Face model link to a model name. '''
+        match = re.search(
+            # second part after the main domain
+            r"huggingface\.co/[^/]+/([^/]+)", model_link
+        )
+        if match:
+            return match.group(1)
+        raise ValueError(f"Invalid model link: {model_link}")
 
     @staticmethod
     def dataset_link_to_id(dataset_link: str) -> str:

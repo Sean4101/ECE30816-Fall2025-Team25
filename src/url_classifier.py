@@ -5,13 +5,15 @@ from typing import List, Dict
 
 def classify_url(url: str) -> str:
     if re.match(r"^https?://huggingface\.co/datasets/", url):
-        return "dataset"
+        return "DATASET"
     elif re.match(r"^https?://huggingface\.co/", url):
-        return "model"
+        return "MODEL"
     elif re.match(r"^https?://github\.com/", url):
-        return "code"
+        return "CODE"
+    elif url == "":
+        return "EMPTY"
     else:
-        return "unknown"
+        return "UNKNOWN"
 
 
 def parse_url_file(filepath: str) -> List[Dict[str, str]]:
@@ -19,10 +21,13 @@ def parse_url_file(filepath: str) -> List[Dict[str, str]]:
     try:
         with open(filepath, "r", encoding="utf-8") as f:
             for line in f:
-                url = line.strip()
-                if url:
-                    category = classify_url(url)
-                    results.append({"url": url, "type": category})
+                line_result = {}
+                urls = line.strip().split(',')
+                for url in urls:
+                    url = url.strip()
+                    classification = classify_url(url)
+                    line_result[url] = classification
+                results.append(line_result)
     except FileNotFoundError:
         print(f"File not found: {filepath}")
     return results
